@@ -1,16 +1,63 @@
+import { useState } from "react";
+import { createMockServer } from "./createMockServer";
 
 
-function App() {
 
-  return (
-    <>
- 
-   <div className="App">
-<h2>Weather Application</h2>
-<p>This is testing app</p>
-   </div>
-    </>
-  )
+createMockServer();
+
+interface City {
+  name: string;
+  country: string;
+  lat: number;
+  lon: number;
 }
 
-export default App
+function App() {
+  const [query, setQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<City[]>([]);
+
+  const inputChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(event.target.value);
+  };
+
+  const buttonClickHandler = () => {
+    fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5`)
+      .then((result) => result.json())
+      .then((cities: City[]) => {
+        setSearchResults(
+          cities.map((city: City) => ({
+            name: city.name,
+            country: city.country,
+            lat: city.lat,
+            lon: city.lon,
+          }))
+        );
+      });
+  };
+
+  return (
+    <div>
+      <div className="App">
+        <h2>Weather Application</h2>
+        <input 
+          type="text" 
+          data-testid="search-input" 
+          value={query}
+          onChange={inputChangeHandler} 
+        />
+        <button data-testid="search-button" onClick={buttonClickHandler}>
+          Search
+        </button>
+
+        <div data-testid="search-results">
+          {searchResults.map((city) => (
+            // Use city.lon directly as the key
+            <div key={city.lon}>{city.name}, {city.country}</div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;
