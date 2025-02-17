@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { createMockServer } from "./createMockServer";
+import { act } from 'react-dom/test-utils';
+
 
 createMockServer();
 
@@ -21,20 +23,22 @@ function App() {
 
   
 
-  const buttonClickHandler = () => {
-    fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5`)
-      .then((result) => result.json())
-      .then((cities: City[]) => {
-        setSearchResults(
-          cities.map((city: City) => ({
-            name: city.name,
-            country: city.country,
-            lat: city.lat,
-            lon: city.lon,
-          }))
-        );
-      });
+  const buttonClickHandler = async () => {
+    const response = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5`);
+    const cities: City[] = await response.json();
+    
+    act(() => {
+      setSearchResults(
+        cities.map((city: City) => ({
+          name: city.name,
+          country: city.country,
+          lat: city.lat,
+          lon: city.lon,
+        }))
+      );
+    });
   };
+  
 
   const selectCity = (city: City) => {
     setSelected(city); // Select the city, no array needed

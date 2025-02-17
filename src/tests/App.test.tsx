@@ -74,37 +74,35 @@ describe('weather app tests', () => {
   
 
 
-/*   it('add search result to my list', async () => {
+  it('adds search result to my list', async () => {
     render(<App />);
   
     const input = screen.getByTestId('search-input');
-    userEvent.type(input, 'Melbourne');
+    await userEvent.type(input, 'Melbourne');
   
     const button = screen.getByTestId('search-button');
   
-    // Wrap the button click in `act()` to ensure the update is completed
+    // Click the search button within `act()`
     await act(async () => {
-      userEvent.click(button);
+      await userEvent.click(button);
     });
   
     // Wait for the results to appear
-    await waitFor(() => {
-      expect(screen.getByText(/Melbourne/i)).toBeInTheDocument();
-    });
+    const cityElements = await screen.findAllByText(/Melbourne/i);
   
-    // Get all the elements containing "Melbourne"
-    const cityElements = screen.getAllByText(/Melbourne/i);
+    // Ensure at least one result appears
+    expect(cityElements.length).toBeGreaterThan(0);
   
-    // If you want to select the first one, for example
-    const firstCity = cityElements[0]; // Modify based on your selection criteria
-    act(() => {
-      userEvent.click(firstCity); // Simulate clicking the city to select it
+    // Click the first result
+    await act(async () => {
+      await userEvent.click(cityElements[0]);
     });
   
     // Ensure that the selected city is added to the "my-weather-list" section
     const weatherList = screen.getByTestId('my-weather-list');
-    expect(within(weatherList).getByText(/Melbourne/i)).toBeInTheDocument();
-  }); */
+    expect(await within(weatherList).findByText(/Melbourne/i)).toBeInTheDocument();
+  });
+  
   
   
 });
