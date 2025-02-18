@@ -138,6 +138,13 @@ describe('weather app tests', () => {
 describe('Weahtercard component test', () => {
   
 
+
+
+
+
+
+
+    
   it('renders city name ', () => {
     const city = {
       name: 'Melbourne',
@@ -151,6 +158,11 @@ describe('Weahtercard component test', () => {
   })
 
 
+
+
+
+
+
   it('renders temperature', () => {
     const city = {
       name: 'Melbourne',
@@ -161,9 +173,54 @@ describe('Weahtercard component test', () => {
     }
 
     render(<WeatherCard city={city}/>);
-  //  expect(screen,getByText(12.79).toBeInTheDocument())
+  //  expect(screen.getByText(12.79).toBeInTheDocument())
+  const linkElement = screen.getByText(/12.79/);
+    expect(linkElement).toBeInTheDocument();
+
+  });
+
+
+
+
+
+
+  it('renders when temp is not avaible', () => {
+    const city = {
+      name: 'Melbourne',
+      country: 'Australia',
+      state: 'Victoria',
+      lat: 0,
+      lon: 0
+    }
+
+    render(<WeatherCard city={city}/>);
+
+    const linkElement = screen.getByText(/Loading.../i);
+    expect(linkElement).toBeInTheDocument();
 
   })
+
+
+
+
+
+
+  it('renders weather info', () => {
+      const city = {
+      name: 'Melbourne',
+      country: 'Australia',
+      state: 'Victoria',
+      lat: 0,
+      lon: 0
+    }
+
+    render(<WeatherCard city={city}/>);
+    const linkElement = screen.getByText(/clouds/i);
+    expect(linkElement).toBeInTheDocument();
+
+  })
+  
+  
   
   
 })
