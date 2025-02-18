@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { createMockServer } from "./createMockServer";
 import './components/search.css'
-
+import WeatherCard from "./components/weatherCard";
+import Search from "./components/search";
 createMockServer();
 
 interface City {
@@ -9,7 +10,7 @@ interface City {
   country: string;
   lat: number;
   lon: number;
-}
+}   
 
 function App() {
   const [query, setQuery] = useState("");
@@ -32,7 +33,7 @@ function App() {
 
   return (
     <div>
-      <div className="App">
+    <div className="App">
         <h2>Weather Application</h2>
         <input
           type="text"
@@ -62,7 +63,8 @@ function App() {
             <div>No city selected</div>
           )}
         </div>
-      </div>
+      </div> 
+    
     </div>
   );
 }

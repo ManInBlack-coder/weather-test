@@ -1,5 +1,6 @@
 import { createServer, Server } from 'miragejs';
 import searchResult from '../search_result.json';
+import weather from '../weather.json'
 
 let server: Server | null = null;
 
@@ -14,6 +15,10 @@ const createMockServer = () => {
       this.get('/geo/1.0/direct', () => {
         return searchResult;
       });
+
+      this.get('/data/2.5/weather', () => {
+        return weather  
+      })
     },
   });
 

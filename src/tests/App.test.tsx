@@ -1,13 +1,20 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { getByText, render, screen, waitFor, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import App from '../App';
 import { createMockServer } from '../createMockServer';
 import { Server } from 'miragejs';
 import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
+import WeatherCard from '../components/weatherCard';
 
 
-
+let server: any
+beforeEach(() => {
+  server = createMockServer()
+})
+afterEach(() => {
+  server.shutdown()
+})
 
 describe('weather app tests', () => {
   let server: Server;
@@ -25,6 +32,9 @@ describe('weather app tests', () => {
     const linkElement = screen.getByText(/Weather Application/i);
     expect(linkElement).toBeInTheDocument();
   });
+
+
+
 
 
 
@@ -124,3 +134,37 @@ describe('weather app tests', () => {
   
   
 });
+
+describe('Weahtercard component test', () => {
+  
+
+  it('renders city name ', () => {
+    const city = {
+      name: 'Melbourne',
+      country: 'Australia',
+      state: 'Victoria',
+      lat: 0,
+      lon: 0
+    }
+    render(<WeatherCard city={city}/>);
+  //    expect(screen.getByText(city.name).toBeInTheDocument())
+  })
+
+
+  it('renders temperature', () => {
+    const city = {
+      name: 'Melbourne',
+      country: 'Australia',
+      state: 'Victoria',
+      lat: 0,
+      lon: 0
+    }
+
+    render(<WeatherCard city={city}/>);
+  //  expect(screen,getByText(12.79).toBeInTheDocument())
+
+  })
+  
+  
+})
+
