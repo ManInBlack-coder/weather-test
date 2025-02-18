@@ -1,0 +1,25 @@
+.App {
+    width: 600px;
+    margin: 2rem auto;
+}
+
+.input-container{
+    display: flex;
+    gap:1rem;
+    align-items: center;
+}
+
+.input-container input{
+    padding: 0.4rem 1rem;
+    width: 100%;
+}
+
+.input-container button{
+    padding: 0.4rem 1rem;
+}
+
+.search-result{
+    padding: 0.4rem 0.4rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+}

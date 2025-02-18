@@ -1,7 +1,6 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { createMockServer } from "./createMockServer";
-import { act } from 'react-dom/test-utils';
-
+import './components/search.css'
 
 createMockServer();
 
@@ -21,29 +20,15 @@ function App() {
     setQuery(event.target.value);
   };
 
-  
-
   const buttonClickHandler = async () => {
     const response = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5`);
     const cities: City[] = await response.json();
-    
-    act(() => {
-      setSearchResults(
-        cities.map((city: City) => ({
-          name: city.name,
-          country: city.country,
-          lat: city.lat,
-          lon: city.lon,
-        }))
-      );
-    });
+    setSearchResults(cities); // Directly set the search results without using act()
   };
-  
 
   const selectCity = (city: City) => {
     setSelected(city); // Select the city, no array needed
   };
-  
 
   return (
     <div>
@@ -63,21 +48,20 @@ function App() {
           {searchResults.map((city) => (
             <div
               key={`${city.lat}-${city.lon}`}
-              onClick={() => selectCity(city)}
-            >
-              {city.name},{city.lat},{city.lon}
+              onClick={() => selectCity(city)}>
+              {city.name}, {city.lat}, {city.lon}
             </div>
           ))}
         </div>
 
         <div data-testid="my-weather-list">
-  <h3>Selected city: </h3>  
-  {selected ? (
-    
-    <div key={`${selected.lat}-${selected.lon}`}>
-    {selected.name} </div>) : (<div>No city selected</div>)}
+          <h3>Selected city: </h3>
+          {selected ? (
+            <div key={`${selected.lat}-${selected.lon}`}>{selected.name}</div>
+          ) : (
+            <div>No city selected</div>
+          )}
         </div>
-
       </div>
     </div>
   );

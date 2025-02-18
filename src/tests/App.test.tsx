@@ -6,6 +6,9 @@ import { Server } from 'miragejs';
 import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 
+
+
+
 describe('weather app tests', () => {
   let server: Server;
 
@@ -22,6 +25,11 @@ describe('weather app tests', () => {
     const linkElement = screen.getByText(/Weather Application/i);
     expect(linkElement).toBeInTheDocument();
   });
+
+
+
+
+
 
   it('shows city search results', async () => {
     render(<App />);
@@ -44,6 +52,11 @@ describe('weather app tests', () => {
   });
 
   
+
+
+
+
+
   it('show city search result detail', async () => {
     render(<App />);
   
@@ -74,6 +87,10 @@ describe('weather app tests', () => {
   
 
 
+
+
+  
+
   it('adds search result to my list', async () => {
     render(<App />);
   
@@ -101,6 +118,7 @@ describe('weather app tests', () => {
     // Ensure that the selected city is added to the "my-weather-list" section
     const weatherList = screen.getByTestId('my-weather-list');
     expect(await within(weatherList).findByText(/Melbourne/i)).toBeInTheDocument();
+
   });
   
   
