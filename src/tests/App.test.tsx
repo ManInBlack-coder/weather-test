@@ -1,7 +1,7 @@
 import { getByText, render, screen, waitFor, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import App from '../App';
-import { createMockServer } from '../createMockServer';
+import { createMockServer } from '../mock/createMockServer';
 import { Server } from 'miragejs';
 import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
@@ -115,7 +115,7 @@ describe('weather app tests', () => {
     });
   
     // Wait for the results to appear
-    const cityElements = await screen.findAllByText(/Melbourne/i);
+    const cityElements = await screen.findAllByText(/Melbourne/);
   
     // Ensure at least one result appears
     expect(cityElements.length).toBeGreaterThan(0);
@@ -127,7 +127,7 @@ describe('weather app tests', () => {
   
     // Ensure that the selected city is added to the "my-weather-list" section
     const weatherList = screen.getByTestId('my-weather-list');
-    expect(await within(weatherList).findByText(/Melbourne/i)).toBeInTheDocument();
+    expect(await within(weatherList).findByText(/Melbourne/)).toBeInTheDocument();
 
   });
   
@@ -144,7 +144,7 @@ describe('Weahtercard component test', () => {
 
 
 
-    
+
   it('renders city name ', () => {
     const city = {
       name: 'Melbourne',
@@ -163,22 +163,16 @@ describe('Weahtercard component test', () => {
 
 
 
-  it('renders temperature', () => {
-    const city = {
-      name: 'Melbourne',
-      country: 'Australia',
-      state: 'Victoria',
-      lat: 0,
-      lon: 0
-    }
-
+  it('renders temperature', async () => {
+    const city = { name: 'Melbourne', country: 'Australia', state: 'Victoria', lat: 0, lon: 0 };
+    
     render(<WeatherCard city={city}/>);
-  //  expect(screen.getByText(12.79).toBeInTheDocument())
-  const linkElement = screen.getByText(/12.79/);
+    
+    // Wait for the temperature to appear
+    const linkElement = await screen.findByText(/12.79/);
     expect(linkElement).toBeInTheDocument();
-
   });
-
+  
 
 
 
@@ -195,7 +189,7 @@ describe('Weahtercard component test', () => {
 
     render(<WeatherCard city={city}/>);
 
-    const linkElement = screen.getByText(/Loading.../i);
+    const linkElement = screen.getByText('-/-');
     expect(linkElement).toBeInTheDocument();
 
   })
@@ -215,8 +209,9 @@ describe('Weahtercard component test', () => {
     }
 
     render(<WeatherCard city={city}/>);
-    const linkElement = screen.getByText(/clouds/i);
-    expect(linkElement).toBeInTheDocument();
+    
+    const linkElement = screen.getByText('clouds');
+    expect(linkElement).toBeInTheDocument(); 
 
   })
   

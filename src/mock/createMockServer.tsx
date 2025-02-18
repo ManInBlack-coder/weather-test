@@ -1,6 +1,6 @@
 import { createServer, Server } from 'miragejs';
-import searchResult from '../search_result.json';
-import weather from '../weather.json'
+import searchResult from '../mock/search_result.json';
+import weather from '../mock/weather.json'
 
 let server: Server | null = null;
 
