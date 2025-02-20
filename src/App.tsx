@@ -4,44 +4,53 @@ import Search from "./components/search";
 import WeatherCard from "./components/weatherCard";
 import { City } from "./hooks/types";
 
-import {mount} from 'cypress/react'
-
-function App() {
-  const [query, setQuery] = useState<string>("");
+const App: React.FC = () => {
   const [searchResults, setSearchResults] = useState<City[]>([]);
   const [selectedCity, setSelectedCity] = useState<City | null>(null);
 
-  const inputChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(event.target.value);
+  const fetchCityCoordinates = async (cityName: string) => {
+    const API_KEY = "f2c151d1a0880214af066c0088b05f96";
+    try {
+      const response = await fetch(
+        `http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=5&appid=${API_KEY}`
+      );
+      const data = await response.json();
+
+      if (data.length === 0) return [];
+
+      return data.map((city: any) => ({
+        name: city.name,
+        lat: city.lat,
+        lon: city.lon,
+      }));
+    } catch (err) {
+      console.error("Error fetching city coordinates", err);
+      return [];
+    }
   };
 
-  // Handle search button click in parent
-  const buttonClickHandler = async (query: string) => {
-    const response = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=YOUR_API_KEY`);
-    const cities: City[] = await response.json();
-    setSearchResults(cities); // Set the results
+  const handleSearch = async (query: string) => {
+    const cities = await fetchCityCoordinates(query);
+    setSearchResults(cities);
   };
 
   const selectCity = (city: City) => {
-    setSelectedCity(city); // Select the city
-    setSearchResults([]);  // Clear search results after selection
+    setSelectedCity(city);
+    setSearchResults([]); // Clear the search results once a city is selected
   };
 
   return (
     <div className="App">
       <h2>Weather Application</h2>
 
-      {/* Pass the onSearch prop to trigger search in Search component */}
       <Search 
-        searchResults={[searchResults]}
+        searchResults={searchResults} 
         onSelectItem={selectCity} 
-        onSearch={buttonClickHandler} 
+        onSearch={handleSearch} 
       />
 
-      {/* Weather Information */}
       <div className="weather-info">
         {selectedCity ? (
-          // Pass the full `city` object, not just lat and lon
           <WeatherCard city={selectedCity} />
         ) : (
           <p>No city selected</p>
@@ -49,6 +58,6 @@ function App() {
       </div>
     </div>
   );
-}
+};
 
 export default App;

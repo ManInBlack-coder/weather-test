@@ -16,7 +16,7 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ city }) => {
   const [error, setError] = useState<string | null>(null);
 
   const kelvinToCelsius = (kelvin: number) => kelvin - 273.15;
-  const kelvinToFahrenheit = (kelvin: number) => (kelvin - 273.15) * 9/5 + 32;
+  const kelvinToFahrenheit = (kelvin: number) => (kelvin - 273.15) * 9 / 5 + 32;
 
   useEffect(() => {
     if (city) {
@@ -30,7 +30,7 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ city }) => {
             });
             setError(null); // Clear previous errors on successful data fetch
           } else {
-            setError('Error: Invalid data format received');
+            setError('Error: Invalid data format received'); 
           }
         })
         .catch((error) => {
@@ -41,13 +41,13 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ city }) => {
   }, [city]);
 
   return (
-    <div className={`weather-container ${weather?.main.toLowerCase()}`}>
+    <div   className={`weather-container ${weather?.main?.toLowerCase() || ''}`}>
       {city ? (
-        <>
+        <div data-testid="wethr-cont">
           <h3>{city.name}</h3>
-          <p>{weather ? `${kelvinToCelsius(weather.temperature).toFixed(2)} °C` : 'Loading...'}</p>
-          <p>{weather?.main || "No data"}</p>
-        </>
+          <p data-testid="temperature" >{weather ? `${kelvinToCelsius(weather.temperature).toFixed(2)} °C` : 'Loading...'}</p>
+          <p data-testid="weather-type" >{weather?.main || "No data"}</p>
+        </div>
       ) : (
         <p>No city selected</p>
       )}

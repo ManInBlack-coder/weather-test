@@ -12,6 +12,7 @@
     "test:cypress": "cypress open"
   },
   "dependencies": {
+    "@babel/preset-typescript": "^7.26.0",
     "@testing-library/jest-dom": "5.17.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/css": "^0.0.38",
