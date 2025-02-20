@@ -16,13 +16,4 @@ const createMockServer = () => {
         return searchResult;
       });
 
-      this.get('/data/2.5/weather', () => {
-        return weather  
-      })
-    },
-  });
-
-  return server;
-};
-
-export { createMockServer };
+      this.get(
