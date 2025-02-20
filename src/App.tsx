@@ -4,6 +4,8 @@ import Search from "./components/search";
 import WeatherCard from "./components/weatherCard";
 import { City } from "./hooks/types";
 
+import {mount} from 'cypress/react'
+
 function App() {
   const [query, setQuery] = useState<string>("");
   const [searchResults, setSearchResults] = useState<City[]>([]);
@@ -31,7 +33,7 @@ function App() {
 
       {/* Pass the onSearch prop to trigger search in Search component */}
       <Search 
-        searchResults={searchResults} 
+        searchResults={[searchResults]}
         onSelectItem={selectCity} 
         onSearch={buttonClickHandler} 
       />

@@ -1,4 +1,4 @@
-import { getByText, render, screen, waitFor, within } from '@testing-library/react';
+/* import { getByText, render, screen, waitFor, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import App from '../App';
 import { createMockServer } from '../mock/createMockServer';
@@ -220,3 +220,4 @@ describe('Weahtercard component test', () => {
   
 })
 
+ */

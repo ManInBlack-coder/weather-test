@@ -13,34 +13,45 @@ interface Weather {
 
 const WeatherCard: React.FC<WeatherCardProps> = ({ city }) => {
   const [weather, setWeather] = useState<Weather | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const kelvinToCelsius = (kelvin: number) => kelvin - 273.15;
+  const kelvinToFahrenheit = (kelvin: number) => (kelvin - 273.15) * 9/5 + 32;
 
   useEffect(() => {
     if (city) {
       fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${city.lat}&lon=${city.lon}&appid=f2c151d1a0880214af066c0088b05f96`)
         .then((result) => result.json())
         .then((data) => {
-          setWeather({
-            temperature: data.main.temp,
-            main: data.weather[0].main,
-          });
+          if (data && data.main && data.weather) {
+            setWeather({
+              temperature: data.main.temp,
+              main: data.weather[0].main,
+            });
+            setError(null); // Clear previous errors on successful data fetch
+          } else {
+            setError('Error: Invalid data format received');
+          }
         })
         .catch((error) => {
           console.error("Error fetching weather data:", error);
+          setError('Error fetching weather data');
         });
     }
   }, [city]);
 
   return (
-    <div className={`weather-container ${weather?.main.toLowerCase() === 'clouds' ? 'clouds' : ''}`}>
+    <div className={`weather-container ${weather?.main.toLowerCase()}`}>
       {city ? (
         <>
           <h3>{city.name}</h3>
-          <p>{weather ? weather.temperature : "-/-"}</p>
-          <p>{weather && weather.main}</p>
+          <p>{weather ? `${kelvinToCelsius(weather.temperature).toFixed(2)} °C` : 'Loading...'}</p>
+          <p>{weather?.main || "No data"}</p>
         </>
       ) : (
         <p>No city selected</p>
       )}
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 };

@@ -1,76 +1,81 @@
 import React, { useState } from "react";
-import './search.css';
+import WeatherCard from "./weatherCard";
+import { City } from "../hooks/types";
 
-interface City {
-  name: string;
-  lat: number;
-  lon: number;
-}
+const Search: React.FC = () => {
+  const [city, setCity] = useState<string>("");
+  const [weatherList, setWeatherList] = useState<City[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<City | null>(null); // Lisatud result
 
-interface SearchProps {
-  searchResults: City[];
-  onSelectItem: (city: City) => void;
-  onSearch: (query: string) => void; // Add the onSearch prop to trigger the search
-}
+  const fetchCityCoordinates = async (cityName: string) => {
+    const API_KEY = "f2c151d1a0880214af066c0088b05f96";
+    try {
+      const response = await fetch(
+        `http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${API_KEY}`
+      );
+      const data = await response.json();
 
-const Search: React.FC<SearchProps> = ({ searchResults, onSelectItem, onSearch }) => {
-  const [results, setSearchResults] = useState<City[]>(searchResults);
-  const [query, setQuery] = useState<string>("");
+      if (data.length === 0) {
+        setError("City not found");
+        return null;
+      }
 
-  // Handle input change
-  const inputChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(event.target.value);
-  };
-
-  const buttonClickHandler = async () => {
-    const apiKey = 'f2c151d1a0880214af066c0088b05f96'; // Replace with your actual API key
-    const response = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${apiKey}`);
-    if (!response.ok) {
-      console.error('Failed to fetch cities');
-      return; // You were missing a return here to prevent further execution
+      return {
+        name: data[0].name,
+        lat: data[0].lat,
+        lon: data[0].lon,
+      };
+    } catch (err) {
+      setError("Error fetching city coordinates");
+      return null;
     }
-    const cities: City[] = await response.json();
-    setSearchResults(cities);
   };
-  
-  
-  
 
-  const onSelect = (city: City) => {
-    onSelectItem(city); // Call onSelectItem passed from parent
-    setSearchResults([]); // Clear the search results after selection
+  const handleSearch = async () => {
+    if (!city) return;
+
+    setError(null); // Tühjendame eelmise vea
+    const newCity = await fetchCityCoordinates(city);
+
+    if (newCity) {
+      setResult(newCity); // Salvestame tulemuse result muutujasse
+      setWeatherList([...weatherList, newCity]);
+      setCity(""); // Tühjenda sisestusväli pärast otsingut
+    }
   };
 
   return (
-    <div className="search-container">
-      <div className="input-container">
-        <input 
-          type="text" 
-          data-testid="search-input" 
-          value={query}
-          onChange={inputChangeHandler} // Update the query state as user types
-        />
-        <button 
-          data-testid="search-button" 
-          className="search-results"
-          onClick={buttonClickHandler} // Trigger search on button click
-        >
-          Search
-        </button>
+    <div>
+      <input
+        type="text"
+        value={city}
+        onChange={(e) => setCity(e.target.value)}
+        placeholder="Enter city name"
+        data-testid="weather-search"
+      />
+      <button onClick={handleSearch} data-testid="weather-search-btn">
+        Search
+      </button>
 
-        <div data-testid="search-results" className="search-result">
-          {results.map((city) => (
-            <div
-              key={`${city.lat}-${city.lon}`}
-              onClick={() => onSelect(city)} 
-              className="city-item"
-            >
-              <span className="city-name">{city.name}</span>
-              <span className="city-location">{city.lat}, {city.lon}</span>
-            </div>
-          ))}
+      {error && <p className="error-message">{error}</p>}
+
+      {result && (
+        <div data-testid="search-result">
+          <h3>Search Result:</h3>
+          <p>{result.name}</p>
+          <p>Latitude: {result.lat}</p>
+          <p>Longitude: {result.lon}</p>
         </div>
-      </div>
+      )}
+
+      <ul data-testid="my-weather-list">
+        {weatherList.map((city) => (
+          <li key={city.name}>
+            <WeatherCard city={city} />
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
